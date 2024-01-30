@@ -6,7 +6,7 @@
 /*   By: kmb <kmb@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/26 20:21:32 by kmb               #+#    #+#             */
-/*   Updated: 2024/01/27 14:23:24 by kmb              ###   ########.fr       */
+/*   Updated: 2024/01/29 20:33:49 by kmb              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 #include <stdlib.h>
 #include <time.h>
 #include <stdio.h>
+#include <sys/time.h>
+#include <stddef.h>
 
 typedef struct {
     int id;
@@ -31,18 +33,15 @@ typedef struct {
 
 #include <sys/time.h>
 
+
 void eat(philosopher_t* philosopher)
 {
 	struct timeval start, end;
 	long mtime, seconds, useconds;
 
 	gettimeofday(&start, NULL);
-	pthread_mutex_lock(philosopher->left_fork);
-	pthread_mutex_lock(philosopher->right_fork);
-	usleep(philosopher->time_to_eat);
-	pthread_mutex_unlock(philosopher->left_fork);
-	pthread_mutex_unlock(philosopher->right_fork);
 	philosopher->times_eaten++;
+	usleep(philosopher->time_to_eat);
 	gettimeofday(&end, NULL);
 	seconds  = end.tv_sec  - start.tv_sec;
 	useconds = end.tv_usec - start.tv_usec;
@@ -91,21 +90,30 @@ void* philosopher_routine(void* arg)
 
 	while (philosopher->times_eaten < philosopher->max_times_to_eat)
 	{
-		if (philosopher->left_fork != NULL && philosopher->right_fork != NULL)
+		   philosopher->start_time = time(NULL);
+
+		pthread_mutex_lock(philosopher->left_fork);
+
+		if (pthread_mutex_trylock(philosopher->right_fork) == 0)
+		{
+			printf("Philo -> %d: picked up both forks\n", philosopher->id);
 			eat(philosopher);
+			pthread_mutex_unlock(philosopher->left_fork);
+			pthread_mutex_unlock(philosopher->right_fork);
+			sleeping(philosopher->time_to_sleep, philosopher->id);
+		}
 		else
 		{
-			usleep(1);
 			printf("Philo -> %d: is thinking\n", philosopher->id);
+			pthread_mutex_unlock(philosopher->left_fork);
 		}
-		sleeping(philosopher->time_to_sleep, philosopher->id);
 		if (philosopher->times_eaten == philosopher->max_times_to_eat)
 			return NULL;
-
 		has_starved(philosopher);
 	}
 	return NULL;
 }
+
 
 
 int main(int argc, char** argv)
@@ -122,12 +130,12 @@ int main(int argc, char** argv)
 	int time_to_sleep = atoi(argv[4]);
 	int max_times_to_eat = atoi(argv[5]);
 	int i = 0;
+	pthread_mutex_t* forks = malloc(sizeof(pthread_mutex_t) * num_philosophers);
 
 	philosopher_t philosophers[num_philosophers];
-	pthread_mutex_t forks[num_philosophers];
 	pthread_t threads[num_philosophers];
 	pthread_cond_init(&cond_var, NULL);
-pthread_mutex_init(&routine_mutex, NULL);
+	pthread_mutex_init(&routine_mutex, NULL);
 
 	while (i < num_philosophers)
 	{
@@ -164,5 +172,6 @@ pthread_mutex_init(&routine_mutex, NULL);
 	}
 	pthread_cond_destroy(&cond_var);
 	pthread_mutex_destroy(&routine_mutex);
+	free(forks);
 	return 0;
 }
