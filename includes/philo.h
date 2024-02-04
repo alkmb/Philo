@@ -6,7 +6,7 @@
 /*   By: akambou <akambou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/26 20:21:12 by kmb               #+#    #+#             */
-/*   Updated: 2024/02/01 18:10:54 by akambou          ###   ########.fr       */
+/*   Updated: 2024/02/04 01:15:04 by akambou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ typedef struct philosopher_s
 	int id;
 	int time_to_die;
 	int time_to_eat;
+	int last_time_eaten;
 	int time_to_sleep;
 	int max_times_to_eat;
 	int times_eaten;

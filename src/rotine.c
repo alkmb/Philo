@@ -6,7 +6,7 @@
 /*   By: akambou <akambou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 18:11:21 by akambou           #+#    #+#             */
-/*   Updated: 2024/02/01 18:11:31 by akambou          ###   ########.fr       */
+/*   Updated: 2024/02/04 02:57:56 by akambou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,33 +15,35 @@
 void* philosopher_routine(void* arg)
 {
 	philosopher_t* philosopher = (philosopher_t*)arg;
-	int philo_thinking = 0;
 
-	while (philosopher->times_eaten < philosopher->max_times_to_eat)
+	while (1)
 	{
-		gettimeofday(&(philosopher->start_time), NULL); // Update start_time
+		struct timeval start, end;
+		long mtime2, seconds, useconds;
 
+		gettimeofday(&start, NULL);
+		philosopher->start_time = start; // Update start_time
+
+		printf("Philo -> %d: picked up left fork\n", philosopher->id);
 		pthread_mutex_lock(philosopher->left_fork);
-
-		if (pthread_mutex_trylock(philosopher->right_fork) == 0)
+		if (pthread_mutex_lock(philosopher->right_fork) == 0)
 		{
-			printf("Philo -> %d: picked up both forks\n", philosopher->id);
-			gettimeofday(&(philosopher->start_time), NULL);
+			gettimeofday(&end, NULL);
 			eat(philosopher);
-			has_starved(philosopher);
-			pthread_mutex_unlock(philosopher->left_fork);
-			pthread_mutex_unlock(philosopher->right_fork);
 			sleeping(philosopher->time_to_sleep, philosopher->id);
-			has_starved(philosopher);
 		}
-		else
+		seconds  = end.tv_sec  - philosopher->start_time.tv_sec;
+		useconds = end.tv_usec - philosopher->start_time.tv_usec;
+		mtime2 = ((seconds * 1000) + useconds) + 0.5;
+		printf("Philo -> %d: is thinking | took %ld ms\n", philosopher->id, mtime2);
+		mtime2 = ((seconds * 1000) + useconds) + 0.5;
+		if (mtime2 >= philosopher->time_to_die)
 		{
-			if (philo_thinking == 0)
-				printf("Philo -> %d: is thinking\n", philosopher->id);
-			philo_thinking = 1;
-			pthread_mutex_unlock(philosopher->left_fork);
+			printf("Philo -> %d: died!!!!!!!!!!!!!!!\n", philosopher->id);
+			exit(EXIT_FAILURE);
 		}
-		has_starved(philosopher);
+		if ( philosopher->max_times_to_eat > 0 && philosopher->times_eaten >= philosopher->max_times_to_eat)
+			break ;
 	}
 	return NULL;
 }
