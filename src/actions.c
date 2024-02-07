@@ -6,37 +6,38 @@
 /*   By: akambou <akambou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 18:11:48 by akambou           #+#    #+#             */
-/*   Updated: 2024/02/04 02:30:00 by akambou          ###   ########.fr       */
+/*   Updated: 2024/02/07 06:25:25 by akambou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo.h"
 
-void sleeping(int sleep_time, int id)
+void	sleeping(t_philosopher *philosopher)
 {
-	struct timeval start, end;
-	long mtime, seconds, useconds;
+	long	mtime;
+	long	seconds;
+	long	useconds;
 
-	gettimeofday(&start, NULL);
-	usleep(sleep_time);
-	gettimeofday(&end, NULL);
-	seconds  = end.tv_sec  - start.tv_sec;
-	useconds = end.tv_usec - start.tv_usec;
+	gettimeofday(&philosopher->start, NULL);
+	usleep(philosopher->time_to_sleep);
+	gettimeofday(&philosopher->end, NULL);
+	seconds = philosopher->end.tv_sec - philosopher->start.tv_sec;
+	useconds = philosopher->end.tv_usec - philosopher->start.tv_usec;
 	mtime = ((seconds * 1000) + useconds) + 0.5;
-	printf("Philo -> %d: is sleeping | took %ld ms\n", id, mtime);
+	printf("Philo -> %d: is sleeping | took %ld ms\n", philosopher->id, mtime);
 }
-void eat(philosopher_t* philosopher)
+
+void	eat(t_philosopher *philosopher)
 {
-	struct timeval start, end;
-	long mtime, seconds, useconds;
+	long	mtime;
+	long	seconds;
+	long	useconds;
 
-	philosopher->times_eaten++;
-	gettimeofday(&start, NULL);
+	gettimeofday(&philosopher->start, NULL);
 	usleep(philosopher->time_to_eat);
-
-	gettimeofday(&end, NULL);
-	seconds  = end.tv_sec  - start.tv_sec;
-	useconds = end.tv_usec - start.tv_usec;
+	gettimeofday(&philosopher->end, NULL);
+	seconds = philosopher->end.tv_sec - philosopher->start.tv_sec;
+	useconds = philosopher->end.tv_usec - philosopher->start.tv_usec;
 	mtime = ((seconds * 1000) + useconds) + 0.5;
 	printf("Philo -> %d: picked up right fork\n", philosopher->id);
 	printf("Philo -> %d: is eating   | took %ld ms\n", philosopher->id, mtime);
