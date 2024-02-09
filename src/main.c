@@ -6,7 +6,7 @@
 /*   By: akambou <akambou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/07 06:10:53 by akambou           #+#    #+#             */
-/*   Updated: 2024/02/07 06:15:41 by akambou          ###   ########.fr       */
+/*   Updated: 2024/02/09 03:07:38 by akambou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,11 @@ int	main(int argc, char **argv)
 	{
 		printf("Usage: %s num_philosophers time_to_die \
 		time_to_eat time_to_sleep max_times_to_eat\n", argv[0]);
+		exit(EXIT_FAILURE);
+	}
+	if (forks == NULL)
+	{
+		printf("Failed to allocate memory for forks\n");
 		exit(EXIT_FAILURE);
 	}
 	if (num_philosophers < 2)
