@@ -6,12 +6,12 @@
 #    By: akambou <akambou@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/26 20:20:59 by kmb               #+#    #+#              #
-#    Updated: 2024/02/10 01:29:16 by akambou          ###   ########.fr        #
+#    Updated: 2024/02/10 02:01:28 by akambou          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror -I includes -g -fsanitize=address -lpthread
+CFLAGS = -Wall -Wextra -Werror -I includes -g -lpthread
 RM = rm -rf
 
 SRCS = $(wildcard src/*.c)

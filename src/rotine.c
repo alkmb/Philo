@@ -6,7 +6,7 @@
 /*   By: akambou <akambou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 18:11:21 by akambou           #+#    #+#             */
-/*   Updated: 2024/02/10 01:59:22 by akambou          ###   ########.fr       */
+/*   Updated: 2024/02/10 02:30:35 by akambou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,17 +14,16 @@
 
 int	check_end(t_philosopher *philosopher, int mtime2)
 {
-	if (mtime2 + philosopher->time_to_sleep >= philosopher->time_to_die)
+	if (mtime2 + philosopher->time_to_sleep + 10000 >= philosopher->time_to_die)
 	{
 		printf("Philo -> %d: died!!!!!!!!!!!!!!!\n", philosopher->id);
 		exit(EXIT_FAILURE);
 	}
 	else if (philosopher->times_eaten == philosopher->max_times_to_eat)
 	{
-		printf("Philo -> %d: is full\n", philosopher->id);
 		exit(EXIT_SUCCESS);
 	}
-	else if (philosopher->time_to_eat + philosopher->time_to_sleep >= philosopher->time_to_die)
+	else if (philosopher->time_to_eat + philosopher->time_to_sleep + 10000 >= philosopher->time_to_die)
 	{
 		printf("Philo -> %d: died!!!!!!!!!!!!!!!\n", philosopher->id);
 		exit(EXIT_FAILURE);
@@ -59,12 +58,11 @@ void	*philosopher_routine(void *arg)
 			pthread_mutex_unlock(philosopher->right_fork);
 			continue ;
 		}
-		usleep(100000);
 		gettimeofday(&end, NULL);
 		seconds = end.tv_sec - philosopher->start_time.tv_sec;
 		useconds = end.tv_usec - philosopher->start_time.tv_usec;
 		mtime2 = ((seconds * 1000000) + useconds);
-		printf("Philo -> %d: is thinking | took %ld ms\n", philosopher->id, mtime2 / 1000);
+		printf("Philo -> %d: is thinking | took %ld ms\n", philosopher->id, (mtime2 + 10000) );
 		check_end(philosopher, mtime2);
 	}
 }
