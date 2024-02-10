@@ -6,7 +6,7 @@
 /*   By: akambou <akambou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/07 06:10:53 by akambou           #+#    #+#             */
-/*   Updated: 2024/02/09 03:07:38 by akambou          ###   ########.fr       */
+/*   Updated: 2024/02/10 01:51:26 by akambou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,9 +64,9 @@ void	join_threads(pthread_t *threads, int num_philosophers)
 int	main(int argc, char **argv)
 {
 	int	num_philosophers = atoi(argv[1]);
-	int	time_to_die = atoi(argv[2]);
-	int	time_to_eat = atoi(argv[3]);
-	int	time_to_sleep = atoi(argv[4]);
+	int	time_to_die = atoi(argv[2]) * 1000;
+	int	time_to_eat = atoi(argv[3]) * 1000;
+	int	time_to_sleep = atoi(argv[4]) * 1000;
 	pthread_t threads[num_philosophers];
 	pthread_mutex_t* forks = malloc(sizeof(pthread_mutex_t) * num_philosophers);
 	t_philosopher philosophers[num_philosophers];
