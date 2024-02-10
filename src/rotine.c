@@ -6,7 +6,7 @@
 /*   By: akambou <akambou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 18:11:21 by akambou           #+#    #+#             */
-/*   Updated: 2024/02/10 02:30:35 by akambou          ###   ########.fr       */
+/*   Updated: 2024/02/10 10:46:07 by akambou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,21 +14,31 @@
 
 int	check_end(t_philosopher *philosopher, int mtime2)
 {
-	if (mtime2 + philosopher->time_to_sleep + 10000 >= philosopher->time_to_die)
+	long	new_time;
+
+	new_time = philosopher->time_to_die / 100000;
+	new_time = new_time % 2;
+	if (new_time == 1)
+		philosopher->time_to_die -= 100000;
+	if (mtime2 + philosopher->time_to_sleep >= philosopher->time_to_die
+		|| philosopher->time_to_eat + philosopher->time_to_sleep \
+	>= philosopher->time_to_die)
 	{
 		printf("Philo -> %d: died!!!!!!!!!!!!!!!\n", philosopher->id);
-		exit(EXIT_FAILURE);
-	}
-	else if (philosopher->times_eaten == philosopher->max_times_to_eat)
-	{
-		exit(EXIT_SUCCESS);
-	}
-	else if (philosopher->time_to_eat + philosopher->time_to_sleep + 10000 >= philosopher->time_to_die)
-	{
-		printf("Philo -> %d: died!!!!!!!!!!!!!!!\n", philosopher->id);
-		exit(EXIT_FAILURE);
+		philosopher->is_dead = 1;
 	}
 	return (0);
+}
+
+long	get_time(t_philosopher *philosopher, struct timeval end, long mtime2)
+{
+	long	seconds;
+	long	useconds;
+
+	seconds = end.tv_sec - philosopher->start_time.tv_sec;
+	useconds = end.tv_usec - philosopher->start_time.tv_usec;
+	mtime2 = ((seconds * 1000000) + useconds);
+	return (mtime2);
 }
 
 void	*philosopher_routine(void *arg)
@@ -36,33 +46,34 @@ void	*philosopher_routine(void *arg)
 	t_philosopher	*philosopher;
 	struct timeval	end;
 	long			mtime2;
-	long			seconds;
-	long			useconds;
 
 	philosopher = (t_philosopher *)arg;
 	while (1)
 	{
+		mtime2 = 0;
 		pthread_mutex_lock(philosopher->right_fork);
 		printf("Philo -> %d: picked up right fork\n", philosopher->id);
 		if (pthread_mutex_lock(philosopher->left_fork) == 0)
 		{
-			philosopher->times_eaten++;
 			eat(philosopher);
-			pthread_mutex_unlock(philosopher->left_fork);
 			gettimeofday(&philosopher->start_time, NULL);
 			sleeping(philosopher);
 		}
 		else
-		{
 			gettimeofday(&philosopher->start_time, NULL);
-			pthread_mutex_unlock(philosopher->right_fork);
-			continue ;
-		}
 		gettimeofday(&end, NULL);
-		seconds = end.tv_sec - philosopher->start_time.tv_sec;
-		useconds = end.tv_usec - philosopher->start_time.tv_usec;
-		mtime2 = ((seconds * 1000000) + useconds);
-		printf("Philo -> %d: is thinking | took %ld ms\n", philosopher->id, (mtime2 + 10000) );
+		mtime2 = get_time(philosopher, end, mtime2);
+		printf("Philo -> %d: is thinking | took %ld ms\n", \
+		philosopher->id, (mtime2));
 		check_end(philosopher, mtime2);
+		pthread_mutex_lock(philosopher->death);
+		if (philosopher->is_dead == 1)
+		{
+			pthread_mutex_unlock(philosopher->death);
+			free(philosopher->death);
+			break ;
+		}
+		pthread_mutex_unlock(philosopher->death);
 	}
+	return 0;
 }

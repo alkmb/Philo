@@ -6,7 +6,7 @@
 /*   By: akambou <akambou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/26 20:21:12 by kmb               #+#    #+#             */
-/*   Updated: 2024/02/07 04:39:39 by akambou          ###   ########.fr       */
+/*   Updated: 2024/02/10 10:16:45 by akambou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,9 @@ typedef struct philosopher_s
 	int					time_to_sleep;
 	int					max_times_to_eat;
 	int					times_eaten;
+	int					total_philos;
+	int					is_dead;
+	pthread_mutex_t		*death;
 	pthread_mutex_t		*left_fork;
 	pthread_mutex_t		*right_fork;
 	struct timeval		start_time;
