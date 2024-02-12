@@ -6,7 +6,7 @@
 /*   By: akambou <akambou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 18:11:21 by akambou           #+#    #+#             */
-/*   Updated: 2024/02/12 09:13:19 by akambou          ###   ########.fr       */
+/*   Updated: 2024/02/12 09:15:06 by akambou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,6 @@ long	lock_forks(t_philosopher *philosopher)
 	philosopher->id, mtime2 / 1000, mtime2);
 	return (mtime2);
 }
-
 
 void	*philosopher_routine(void *arg)
 {
