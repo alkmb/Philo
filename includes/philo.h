@@ -6,7 +6,7 @@
 /*   By: akambou <akambou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/26 20:21:12 by kmb               #+#    #+#             */
-/*   Updated: 2024/02/12 09:13:52 by akambou          ###   ########.fr       */
+/*   Updated: 2024/02/13 02:25:24 by akambou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ typedef struct philosopher_s
 	int					times_eaten;
 	int					total_philos;
 	int					is_dead;
-	pthread_mutex_t		*death;
+	t_shared			*shared;
 	pthread_mutex_t		*left_fork;
 	pthread_mutex_t		*right_fork;
 	struct timeval		start_fork;
@@ -57,14 +57,15 @@ long	get_time(struct timeval start, struct timeval end, long mtime2);
 
 /*-----------------------INIT----------------------*/
 void	initialize_philosophers(t_philosopher *philosophers, \
-		int num_philosophers, char **argv, int max_times_to_eat);
+		int num_philosophers, char **argv, t_shared *shared);
 void	initialize_philosopher_properties(t_philosopher *philosophers, \
-		int num_philosophers, char **argv, int max_times_to_eat);
+		int num_philosophers, char **argv, t_shared *shared);
 void	assign_forks(t_philosopher *philosophers, int num_philosophers);
 
 /*-----------------------THREADS----------------------*/
 void	create_threads(pthread_t *threads, t_philosopher \
 		*philosophers, int num_philosophers);
-void	join_threads(pthread_t *threads, int num_philosophers);
+int		join_threads(pthread_t *threads, int num_philosophers, \
+		t_shared *shared);
 
 #endif
