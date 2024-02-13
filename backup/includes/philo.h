@@ -6,7 +6,7 @@
 /*   By: akambou <akambou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/26 20:21:12 by kmb               #+#    #+#             */
-/*   Updated: 2024/02/13 15:03:48 by akambou          ###   ########.fr       */
+/*   Updated: 2024/02/13 19:19:00 by akambou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ typedef struct s_shared
 {
 	int				stop_all_threads;
 	pthread_mutex_t	*death;
+	pthread_mutex_t	*print;
 }t_shared;
 
 typedef struct philosopher_s

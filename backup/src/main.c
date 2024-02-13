@@ -6,7 +6,7 @@
 /*   By: akambou <akambou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/07 06:10:53 by akambou           #+#    #+#             */
-/*   Updated: 2024/02/13 15:12:44 by akambou          ###   ########.fr       */
+/*   Updated: 2024/02/13 20:37:22 by akambou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ int	main(int argc, char **argv)
 
 	shared.stop_all_threads = 0;
 	shared.death = malloc(sizeof(pthread_mutex_t));
+
 	pthread_mutex_init(shared.death, NULL);
 	num_philosophers = atoi(argv[1]);
 	philosophers = malloc(sizeof(t_philosopher) * num_philosophers);
