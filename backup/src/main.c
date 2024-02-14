@@ -6,7 +6,7 @@
 /*   By: akambou <akambou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/07 06:10:53 by akambou           #+#    #+#             */
-/*   Updated: 2024/02/13 20:37:22 by akambou          ###   ########.fr       */
+/*   Updated: 2024/02/15 00:24:56 by akambou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ void	create_threads(pthread_t *threads, t_philosopher \
 	{
 		pthread_create(&threads[i], (void *)0, philosopher_routine, \
 		&philosophers[i]);
+		usleep(1000);
 		i++;
 	}
 }
@@ -34,6 +35,7 @@ int	join_threads(pthread_t *threads, int num_philosophers)
 	while (i < num_philosophers)
 	{
 		pthread_join(threads[i], NULL);
+		usleep(1000);
 		i++;
 	}
 	return (0);
