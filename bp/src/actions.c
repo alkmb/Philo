@@ -6,7 +6,7 @@
 /*   By: akambou <akambou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 18:11:48 by akambou           #+#    #+#             */
-/*   Updated: 2024/02/13 20:36:56 by akambou          ###   ########.fr       */
+/*   Updated: 2024/02/14 23:12:08 by akambou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,13 +19,20 @@ void	sleeping(t_philosopher *philosopher)
 	long	useconds;
 
 	gettimeofday(&philosopher->start, NULL);
-	usleep(philosopher->time_to_sleep);
+	if (philosopher->shared->stop_all_threads == 0)
+		usleep(philosopher->time_to_sleep);
 	gettimeofday(&philosopher->end, NULL);
 	seconds = philosopher->end.tv_sec - philosopher->start.tv_sec;
 	useconds = philosopher->end.tv_usec - philosopher->start.tv_usec;
 	mtime = ((seconds * 1000000) + useconds) + 0.5;
-	printf("\033[34mPhilo -> %d: is sleeping | took %ld ms -> (%ld).\
-	\033[0m\n", philosopher->id, mtime / 1000, mtime);
+	if (philosopher->shared->stop_all_threads == 0)
+	{
+		printf("\033[34mPhilo -> %d: is sleeping | took %ld ms -> (%ld).\
+		\033[0m\n", philosopher->id, mtime / 1000, mtime);
+		mtime = 0;
+	}
+	else
+	printf("");
 }
 
 void	eat(t_philosopher *philosopher)
@@ -36,14 +43,20 @@ void	eat(t_philosopher *philosopher)
 
 	philosopher->times_eaten++;
 	gettimeofday(&philosopher->start, NULL);
-	usleep(philosopher->time_to_eat);
+	if (philosopher->shared->stop_all_threads == 0)
+		usleep(philosopher->time_to_eat);
 	gettimeofday(&philosopher->end, NULL);
 	seconds = philosopher->end.tv_sec - philosopher->start.tv_sec;
 	useconds = philosopher->end.tv_usec - philosopher->start.tv_usec;
 	mtime = ((seconds * 1000000) + useconds) + 0.5;
 	if (philosopher->shared->stop_all_threads == 0)
+	{
 		printf("\033[32mPhilo -> %d: is eating   | took %ld ms -> \(%ld).\
-	\033[0m\n", philosopher->id, mtime / 1000, mtime);
+		\033[0m\n", philosopher->id, mtime / 1000, mtime);
+		mtime = 0;
+	}
+	else
+		printf ("");
 	pthread_mutex_unlock(philosopher->right_fork);
 	pthread_mutex_unlock(philosopher->left_fork);
 }

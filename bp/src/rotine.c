@@ -6,29 +6,29 @@
 /*   By: akambou <akambou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 18:11:21 by akambou           #+#    #+#             */
-/*   Updated: 2024/02/13 20:39:47 by akambou          ###   ########.fr       */
+/*   Updated: 2024/02/14 23:19:41 by akambou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo.h"
 
-int check_end(t_philosopher *philosopher, int mtime)
+int	check_end(t_philosopher *philosopher, int mtime)
 {
-    pthread_mutex_lock(philosopher->shared->death);
+	pthread_mutex_lock(philosopher->shared->death);
 
-    mtime += philosopher->time_to_eat;
-    if (mtime >= philosopher->time_to_die)
-    {
-        if (philosopher->shared->stop_all_threads == 0)
-            printf("\033[31mPhilo -> %d: died in %d ms (%d)\033[0m\n", \
-        philosopher->id, mtime / 1000, mtime);
-        philosopher->shared->stop_all_threads = 1;
-        pthread_mutex_unlock(philosopher->shared->death);
+	mtime += philosopher->time_to_eat;
+	if (mtime >= philosopher->time_to_die)
+	{
+		if (philosopher->shared->stop_all_threads == 0)
+			printf("\033[31mPhilo -> %d: died in %d ms (%d)\033[0m\n", \
+		philosopher->id, mtime / 1000, mtime);
+		philosopher->shared->stop_all_threads = 1;
+		pthread_mutex_unlock(philosopher->shared->death);
 
-        return (1);
-    }
-    pthread_mutex_unlock(philosopher->shared->death);
-    return (0);
+		return (1);
+	}
+	pthread_mutex_unlock(philosopher->shared->death);
+	return (0);
 }
 
 
@@ -83,8 +83,8 @@ void	*philosopher_routine(void *arg)
 	{
 		if (end_loop(philosopher) == (void *)1)
 		{
-			printf("i ended.");
-			break;
+			printf("");
+			break ;
 		}
 		gettimeofday(&philosopher->start_fork, NULL);
 		lock_forks(philosopher);
@@ -97,8 +97,9 @@ void	*philosopher_routine(void *arg)
 			if (philosopher->shared->stop_all_threads == 0)
 				printf("Philo -> %d: left fork   | took %ld ms -> (%ld).\n", \
 			philosopher->id, mtime / 1000, mtime);
-			if (philosopher->shared->stop_all_threads == 0)
-				eat(philosopher);
+			pthread_mutex_lock(philosopher->shared->print);
+			eat(philosopher);
+			pthread_mutex_unlock(philosopher->shared->print);
 			if (end_loop(philosopher) == (void *)1)
 				return ((void *)1);
 			gettimeofday(&philosopher->start_fork, NULL);
@@ -107,8 +108,7 @@ void	*philosopher_routine(void *arg)
 		if (philosopher->max_times_to_eat != 0 && \
 		philosopher->times_eaten >= philosopher->max_times_to_eat)
 			break ;
-		if (philosopher->shared->stop_all_threads == 0)
-			printf("\033[33mPhilo -> %d: is thinking | took %ld ms -> (%ld).\
+		printf("\033[33mPhilo -> %d: is thinking | took %ld ms -> (%ld).\
 		\033[0m\n", philosopher->id, mtime / 1000, mtime);
 		check_end(philosopher, mtime);
 	}
