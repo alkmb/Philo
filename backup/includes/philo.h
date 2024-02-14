@@ -6,7 +6,7 @@
 /*   By: akambou <akambou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/26 20:21:12 by kmb               #+#    #+#             */
-/*   Updated: 2024/02/14 23:15:51 by akambou          ###   ########.fr       */
+/*   Updated: 2024/02/13 19:19:00 by akambou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,8 @@ typedef struct philosopher_s
 	int					total_philos;
 	int					is_dead;
 	t_shared			*shared;
-	pthread_mutex_t		*right_fork;
 	pthread_mutex_t		*left_fork;
+	pthread_mutex_t		*right_fork;
 	struct timeval		start_fork;
 	struct timeval		end_fork;
 	struct timeval		start;
@@ -61,9 +61,11 @@ void	initialize_philosophers(t_philosopher *philosophers, \
 		int num_philosophers, char **argv, t_shared *shared);
 void	initialize_philosopher_properties(t_philosopher *philosophers, \
 		int num_philosophers, char **argv, t_shared *shared);
+void	assign_forks(t_philosopher *philosophers, int num_philosophers);
 
 /*-----------------------THREADS----------------------*/
 void	create_threads(pthread_t *threads, t_philosopher \
 		*philosophers, int num_philosophers);
+int		join_threads(pthread_t *threads, int num_philosophers);
 
 #endif

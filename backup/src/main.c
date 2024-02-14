@@ -6,7 +6,7 @@
 /*   By: akambou <akambou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/07 06:10:53 by akambou           #+#    #+#             */
-/*   Updated: 2024/02/14 23:17:34 by akambou          ###   ########.fr       */
+/*   Updated: 2024/02/13 20:37:22 by akambou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ void	cleanup(t_philosopher *philosophers, int num_philosophers)
 		pthread_mutex_destroy(philosophers[i].left_fork);
 		pthread_mutex_destroy(philosophers[i].right_fork);
 		pthread_mutex_destroy(philosophers[i].shared->death);
+		free(philosophers[i].right_fork);
 		i++;
 	}
 	free(philosophers);
@@ -63,10 +64,8 @@ int	main(int argc, char **argv)
 
 	shared.stop_all_threads = 0;
 	shared.death = malloc(sizeof(pthread_mutex_t));
-	shared.print = malloc(sizeof(pthread_mutex_t));
 
 	pthread_mutex_init(shared.death, NULL);
-	pthread_mutex_init(shared.print, NULL);
 	num_philosophers = atoi(argv[1]);
 	philosophers = malloc(sizeof(t_philosopher) * num_philosophers);
 	threads = malloc(sizeof(pthread_t) * num_philosophers);
@@ -85,6 +84,5 @@ int	main(int argc, char **argv)
 	cleanup(philosophers, num_philosophers);
 	free(threads);
 	free(shared.death);
-	free(shared.print);
 	return (0);
 }
