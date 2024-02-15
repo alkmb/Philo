@@ -6,35 +6,11 @@
 /*   By: akambou <akambou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 18:11:21 by akambou           #+#    #+#             */
-/*   Updated: 2024/02/13 14:59:29 by akambou          ###   ########.fr       */
+/*   Updated: 2024/02/15 02:26:01 by akambou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo.h"
-
-int	check_end(t_philosopher *philosopher, int mtime)
-{
-	pthread_mutex_lock(philosopher->shared->death);
-	if (mtime >= philosopher->time_to_die || mtime + philosopher-> \
-	time_to_eat >= philosopher->time_to_die)
-	{
-		printf("\033[31mPhilo -> %d: died in %d ms (%d)\033[0m\n", \
-		philosopher->id, mtime / 1000, mtime);
-		philosopher->shared->stop_all_threads = 1;
-		pthread_mutex_unlock(philosopher->shared->death);
-		return (1);
-	}
-	else if (philosopher->max_times_to_eat != 0 && \
-	philosopher->times_eaten >= philosopher->max_times_to_eat)
-	{
-		printf("\033[32mPhilo -> %d: has eaten %d times\033[0m\n", \
-		philosopher->id, philosopher->times_eaten);
-		philosopher->shared->stop_all_threads = 1;
-		return (1);
-	}
-	pthread_mutex_unlock(philosopher->shared->death);
-	return (0);
-}
 
 long	get_time(struct timeval start, struct timeval end, long mtime)
 {
@@ -61,63 +37,47 @@ long	lock_forks(t_philosopher *philosopher)
 	return (mtime);
 }
 
-void	*end_program(t_philosopher *philosopher)
+int	routine_actions(t_philosopher *philosopher, long mtime, int dead)
 {
-	pthread_mutex_lock(philosopher->shared->death);
-	if (philosopher->shared->stop_all_threads == 1)
+	if (dead == 0)
 	{
-		pthread_mutex_unlock(philosopher->shared->death);
-		return ((void *)1);
+		eat(philosopher);
+		sleeping(philosopher);
+		gettimeofday(&philosopher->start_fork, NULL);
+		if (philosopher->max_times_to_eat != 0 && \
+		philosopher->times_eaten >= philosopher->max_times_to_eat)
+			return (1);
+		printf("\033[33mPhilo -> %d: is thinking | took %ld ms -> (%ld).\
+		\033[0m\n", philosopher->id, mtime / 1000, mtime);
 	}
-	pthread_mutex_unlock(philosopher->shared->death);
-	return ((void *)0);
-}
-
-void	*end_loop(t_philosopher *philosopher)
-{
-	pthread_mutex_lock(philosopher->shared->death);
-	if (philosopher->shared->stop_all_threads == 1)
-	{
-		pthread_mutex_unlock(philosopher->shared->death);
-		return ((void *)1);
-	}
-	pthread_mutex_unlock(philosopher->shared->death);
-	if (end_program(philosopher) == (void *)1)
-	{
-		return ((void *)1);
-	}
-	return ((void *)0);
+	return (0);
 }
 
 void	*philosopher_routine(void *arg)
 {
 	t_philosopher	*philosopher;
 	long			mtime;
+	int				dead;
 
 	mtime = 0;
 	philosopher = (t_philosopher *)arg;
 	while (1)
 	{
 		if (end_loop(philosopher) == (void *)1)
-			return ((void *)1);
-			usleep (1000);
+			break ;
 		gettimeofday(&philosopher->start_fork, NULL);
 		lock_forks(philosopher);
-		if (pthread_mutex_lock(philosopher->left_fork) == 0)
-		{
-			gettimeofday(&philosopher->end_fork, NULL);
-			mtime = get_time(philosopher->start_fork, philosopher->end_fork, \
-			mtime);
-			printf("Philo -> %d: left fork   | took %ld ms -> (%ld).\n", \
-			philosopher->id, mtime / 1000, mtime);
-			eat(philosopher);
-			check_end(philosopher, mtime);
-			gettimeofday(&philosopher->start_fork, NULL);
-			sleeping(philosopher);
-		}
-		printf("\033[33mPhilo -> %d: is thinking | took %ld ms -> (%ld).\
-		\033[0m\n", philosopher->id, mtime / 1000, mtime);
-		check_end(philosopher, mtime);
+		pthread_mutex_lock(philosopher->shared->death);
+		dead = check_end(philosopher, mtime);
+		pthread_mutex_unlock(philosopher->shared->death);
+		pthread_mutex_lock(philosopher->left_fork);
+		printf("Philo -> %d: left fork   | took %ld ms -> (%ld).\n", \
+		philosopher->id, mtime / 1000, mtime);
+		gettimeofday(&philosopher->end_fork, NULL);
+		mtime = get_time(philosopher->start_fork, philosopher->end_fork, \
+		mtime);
+		if (routine_actions(philosopher, mtime, dead) == 1)
+			break ;
 	}
 	return ((void *)0);
 }

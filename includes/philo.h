@@ -6,7 +6,7 @@
 /*   By: akambou <akambou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/26 20:21:12 by kmb               #+#    #+#             */
-/*   Updated: 2024/02/13 15:03:48 by akambou          ###   ########.fr       */
+/*   Updated: 2024/02/15 02:14:33 by akambou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,8 @@ typedef struct s_shared
 {
 	int				stop_all_threads;
 	pthread_mutex_t	*death;
-}t_shared;
+	pthread_mutex_t	*print;
+}	t_shared;
 
 typedef struct philosopher_s
 {
@@ -46,13 +47,12 @@ typedef struct philosopher_s
 	struct timeval		start;
 	struct timeval		end;
 
-}t_philosopher;
+}	t_philosopher;
 
 /*-----------------------ROUTINE----------------------*/
 void	eat(t_philosopher *philosopher);
 void	*philosopher_routine(void *philosopher);
 void	sleeping(t_philosopher *philosopher);
-int		check_end(t_philosopher *philosopher, int mtime2);
 long	get_time(struct timeval start, struct timeval end, long mtime2);
 
 /*-----------------------INIT----------------------*/
@@ -66,5 +66,9 @@ void	assign_forks(t_philosopher *philosophers, int num_philosophers);
 void	create_threads(pthread_t *threads, t_philosopher \
 		*philosophers, int num_philosophers);
 int		join_threads(pthread_t *threads, int num_philosophers);
+
+/*-----------------------EXIT----------------------*/
+int		check_end(t_philosopher *philosopher, int mtime2);
+void	*end_loop(t_philosopher *philosopher);
 
 #endif
