@@ -6,7 +6,7 @@
 /*   By: akambou <akambou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 18:11:21 by akambou           #+#    #+#             */
-/*   Updated: 2024/02/15 02:26:01 by akambou          ###   ########.fr       */
+/*   Updated: 2024/02/22 13:57:23 by akambou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,10 @@ int	routine_actions(t_philosopher *philosopher, long mtime, int dead)
 {
 	if (dead == 0)
 	{
+		pthread_mutex_lock(philosopher->left_fork);
+		printf("Philo -> %d: left fork   | took %ld ms -> (%ld).\n", \
+		philosopher->id, mtime / 1000, mtime);
+		gettimeofday(&philosopher->end_fork, NULL);
 		eat(philosopher);
 		sleeping(philosopher);
 		gettimeofday(&philosopher->start_fork, NULL);
@@ -63,20 +67,17 @@ void	*philosopher_routine(void *arg)
 	philosopher = (t_philosopher *)arg;
 	while (1)
 	{
-		if (end_loop(philosopher) == (void *)1)
-			break ;
+		usleep(1000 * 10);
 		gettimeofday(&philosopher->start_fork, NULL);
 		lock_forks(philosopher);
 		pthread_mutex_lock(philosopher->shared->death);
 		dead = check_end(philosopher, mtime);
 		pthread_mutex_unlock(philosopher->shared->death);
-		pthread_mutex_lock(philosopher->left_fork);
-		printf("Philo -> %d: left fork   | took %ld ms -> (%ld).\n", \
-		philosopher->id, mtime / 1000, mtime);
-		gettimeofday(&philosopher->end_fork, NULL);
 		mtime = get_time(philosopher->start_fork, philosopher->end_fork, \
 		mtime);
 		if (routine_actions(philosopher, mtime, dead) == 1)
+			break ;
+		if (end_loop(philosopher) == (void *)1)
 			break ;
 	}
 	return ((void *)0);
