@@ -6,7 +6,7 @@
 /*   By: akambou <akambou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 18:11:21 by akambou           #+#    #+#             */
-/*   Updated: 2024/02/23 13:47:11 by akambou          ###   ########.fr       */
+/*   Updated: 2024/02/23 16:53:07 by akambou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,8 @@ int	routine_actions(t_philosopher *philosopher, long mtime, int dead)
 		printf("Philo -> %d: left fork   | took %ld ms -> (%ld).\n", \
 		philosopher->id, mtime / 1000, mtime);
 		gettimeofday(&philosopher->end_fork, NULL);
-		eat(philosopher);
+		if (philosopher->shared->stop_all_threads == 0)
+			eat(philosopher);
 		sleeping(philosopher);
 		gettimeofday(&philosopher->start_fork, NULL);
 		if (philosopher->max_times_to_eat != 0 && \
@@ -62,9 +63,11 @@ void	*philosopher_routine(void *arg)
 	t_philosopher	*philosopher;
 	long			mtime;
 	int				dead;
-	static int		dead_philo;
+	int		dead_philo;
 
 	mtime = 0;
+	dead = 0;
+	dead_philo = 0;
 	philosopher = (t_philosopher *)arg;
 	while (1)
 	{
@@ -72,27 +75,31 @@ void	*philosopher_routine(void *arg)
 		{
 			if (dead == 0 && philosopher->id == dead_philo)
 			{
+				pthread_mutex_unlock(philosopher->shared->death);
 				dead_philo = philosopher->id;
 				printf("\033[31mPhilo -> %d: died in %ld ms (%ld)\033[0m\n", \
 			philosopher->id, mtime / 1000, mtime);
-				//pthread_mutex_unlock(philosopher->shared->death);
-				break ;
-			}
-			else
-			{
-				printf("");
-				break ;
+				return ((void *)0);
 			}
 		}
+		pthread_mutex_unlock(philosopher->shared->death);
+
+			//else
+			//{
+			//	printf("");
+			//	break ;
+			//}
 		gettimeofday(&philosopher->start_fork, NULL);
 		lock_forks(philosopher);
-		pthread_mutex_lock(philosopher->shared->death);
-		dead = check_end(philosopher, mtime);
-		pthread_mutex_unlock(philosopher->shared->death);
+		if (check_end(philosopher, mtime))
+			dead = 1;
 		mtime = get_time(philosopher->start_fork, philosopher->end_fork, \
 		mtime);
-		if (routine_actions(philosopher, mtime, dead) == 1)
-			break ;
+		if (dead == 0)
+		{
+			if (routine_actions(philosopher, mtime, dead) == 1)
+				break ;
+		}
 	}
 	return ((void *)0);
 }

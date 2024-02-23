@@ -6,7 +6,7 @@
 /*   By: akambou <akambou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/12 07:23:04 by akambou           #+#    #+#             */
-/*   Updated: 2024/02/23 13:47:25 by akambou          ###   ########.fr       */
+/*   Updated: 2024/02/23 16:47:46 by akambou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ int num_philosophers, char **argv, t_shared *shared)
 		pthread_mutex_init(philosophers[i].shared->death, NULL);
 		i++;
 	}
+	philosophers->shared->stop_all_threads = 0;
 }
 
 void	assign_forks(t_philosopher *philosophers, int num_philosophers)

@@ -6,7 +6,7 @@
 /*   By: akambou <akambou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/07 06:10:53 by akambou           #+#    #+#             */
-/*   Updated: 2024/02/23 13:47:01 by akambou          ###   ########.fr       */
+/*   Updated: 2024/02/23 16:57:02 by akambou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,9 @@ void	create_threads(pthread_t *threads, t_philosopher \
 	i = 0;
 	while (i < num_philosophers)
 	{
-		pthread_create(&threads[i], (void *)0, philosopher_routine, \
-		&philosophers[i]);
+		if (pthread_create(&threads[i], (void *)0, philosopher_routine, \
+		&philosophers[i]))
+			return ;
 		usleep(1000 * 10);
 		i++;
 	}
@@ -34,7 +35,7 @@ int	join_threads(pthread_t *threads, int num_philosophers)
 	i = 0;
 	while (i < num_philosophers)
 	{
-		pthread_join(threads[i], NULL);
+		pthread_detach(threads[i]);
 		i++;
 	}
 	return (0);
@@ -80,6 +81,12 @@ time_to_eat time_to_sleep max_times_to_eat\n", argv[0]);
 	initialize_philosophers(philosophers, num_philosophers, \
 	argv, &shared);
 	create_threads(threads, philosophers, num_philosophers);
+
+	while (!end_loop(philosophers))
+	{
+	}
+	printf("\033[31mPhilo -> %d: died in %d \033[0m\n", \
+	philosophers->id, 10);
 	join_threads(threads, num_philosophers);
 	cleanup(philosophers, num_philosophers, threads);
 	free(shared.death);
