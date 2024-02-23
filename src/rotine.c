@@ -6,7 +6,7 @@
 /*   By: akambou <akambou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 18:11:21 by akambou           #+#    #+#             */
-/*   Updated: 2024/02/22 13:57:23 by akambou          ###   ########.fr       */
+/*   Updated: 2024/02/23 13:47:11 by akambou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,12 +62,28 @@ void	*philosopher_routine(void *arg)
 	t_philosopher	*philosopher;
 	long			mtime;
 	int				dead;
+	static int		dead_philo;
 
 	mtime = 0;
 	philosopher = (t_philosopher *)arg;
 	while (1)
 	{
-		usleep(1000 * 10);
+		if (end_loop(philosopher) == (void *)1)
+		{
+			if (dead == 0 && philosopher->id == dead_philo)
+			{
+				dead_philo = philosopher->id;
+				printf("\033[31mPhilo -> %d: died in %ld ms (%ld)\033[0m\n", \
+			philosopher->id, mtime / 1000, mtime);
+				//pthread_mutex_unlock(philosopher->shared->death);
+				break ;
+			}
+			else
+			{
+				printf("");
+				break ;
+			}
+		}
 		gettimeofday(&philosopher->start_fork, NULL);
 		lock_forks(philosopher);
 		pthread_mutex_lock(philosopher->shared->death);
@@ -76,8 +92,6 @@ void	*philosopher_routine(void *arg)
 		mtime = get_time(philosopher->start_fork, philosopher->end_fork, \
 		mtime);
 		if (routine_actions(philosopher, mtime, dead) == 1)
-			break ;
-		if (end_loop(philosopher) == (void *)1)
 			break ;
 	}
 	return ((void *)0);

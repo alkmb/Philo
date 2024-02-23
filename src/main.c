@@ -6,7 +6,7 @@
 /*   By: akambou <akambou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/07 06:10:53 by akambou           #+#    #+#             */
-/*   Updated: 2024/02/22 14:07:42 by akambou          ###   ########.fr       */
+/*   Updated: 2024/02/23 13:47:01 by akambou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,6 @@ void	create_threads(pthread_t *threads, t_philosopher \
 		pthread_create(&threads[i], (void *)0, philosopher_routine, \
 		&philosophers[i]);
 		usleep(1000 * 10);
-		if (num_philosophers > 60)
-		{
-			usleep(100000);
-		}
 		i++;
 	}
 }
@@ -72,7 +68,7 @@ int	main(int argc, char **argv)
 	if (argc < 5)
 	{
 		printf("Usage: %s num_philosophers time_to_die \
-		time_to_eat time_to_sleep max_times_to_eat\n", argv[0]);
+time_to_eat time_to_sleep max_times_to_eat\n", argv[0]);
 		return (1);
 	}
 	num_philosophers = atoi(argv[1]);
