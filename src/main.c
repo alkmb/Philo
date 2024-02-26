@@ -64,6 +64,7 @@ int	main(int argc, char **argv)
 	int				num_philosophers;
 	t_philosopher	*philosophers;
 	pthread_t		*threads;
+	int				mtime;
 	t_shared		shared;
 
 	if (argc < 5)
@@ -74,6 +75,7 @@ time_to_eat time_to_sleep max_times_to_eat\n", argv[0]);
 	}
 	num_philosophers = atoi(argv[1]);
 	shared.stop_all_threads = 0;
+	mtime = 0;
 	shared.death = malloc(sizeof(pthread_mutex_t));
 	pthread_mutex_init(shared.death, NULL);
 	philosophers = malloc(sizeof(t_philosopher) * num_philosophers);
@@ -81,12 +83,16 @@ time_to_eat time_to_sleep max_times_to_eat\n", argv[0]);
 	initialize_philosophers(philosophers, num_philosophers, \
 	argv, &shared);
 	create_threads(threads, philosophers, num_philosophers);
-
+	gettimeofday(&philosophers->start_fork, NULL);
 	while (!end_loop(philosophers))
 	{
 	}
-	printf("\033[31mPhilo -> %d: died in %d \033[0m\n", \
-	philosophers->id, 10);
+	gettimeofday(&philosophers->end_fork, NULL);
+	mtime = get_time(philosophers->start_fork, philosophers->end_fork, \
+	mtime);
+	mtime -= philosophers->time_to_die;
+	printf("\033[31mA Philo died in %d ms (%d) \033[0m\n", \
+	mtime / 1000, mtime);
 	join_threads(threads, num_philosophers);
 	cleanup(philosophers, num_philosophers, threads);
 	free(shared.death);

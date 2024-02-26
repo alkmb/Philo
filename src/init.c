@@ -40,7 +40,6 @@ int num_philosophers, char **argv, t_shared *shared)
 		pthread_mutex_init(philosophers[i].shared->death, NULL);
 		i++;
 	}
-	philosophers->shared->stop_all_threads = 0;
 }
 
 void	assign_forks(t_philosopher *philosophers, int num_philosophers)
@@ -63,5 +62,6 @@ int num_philosophers, char **argv, t_shared *shared)
 {
 	initialize_philosopher_properties(philosophers, \
 	num_philosophers, argv, shared);
+	philosophers->shared->stop_all_threads = 0;
 	assign_forks(philosophers, num_philosophers);
 }

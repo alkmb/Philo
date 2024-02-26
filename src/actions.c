@@ -25,7 +25,7 @@ void	sleeping(t_philosopher *philosopher)
 	useconds = philosopher->end.tv_usec - philosopher->start.tv_usec;
 	mtime = ((seconds * 1000000) + useconds) + 0.5;
 	printf("\033[34mPhilo -> %d: is sleeping | took %ld ms -> (%ld).\
-	\033[0m\n", philosopher->id, mtime / 1000, mtime);
+	\033[0m\n", philosopher->id + 1, mtime / 1000, mtime);
 }
 
 void	eat(t_philosopher *philosopher)
@@ -43,7 +43,7 @@ void	eat(t_philosopher *philosopher)
 	mtime = ((seconds * 1000000) + useconds) + 0.5;
 	if (philosopher->shared->stop_all_threads == 0)
 		printf("\033[32mPhilo -> %d: is eating   | took %ld ms -> \(%ld).\
-	\033[0m\n", philosopher->id, mtime / 1000, mtime);
+	\033[0m\n", philosopher->id + 1, mtime / 1000, mtime);
 	pthread_mutex_unlock(philosopher->right_fork);
 	pthread_mutex_unlock(philosopher->left_fork);
 }

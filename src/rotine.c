@@ -33,7 +33,7 @@ long	lock_forks(t_philosopher *philosopher)
 	gettimeofday(&philosopher->end_fork, NULL);
 	mtime = get_time(philosopher->start_fork, philosopher->end_fork, mtime);
 	printf("Philo -> %d: right fork  | took %ld ms -> (%ld).\n", \
-	philosopher->id, mtime / 1000, mtime);
+	philosopher->id + 1, mtime / 1000, mtime);
 	return (mtime);
 }
 
@@ -43,7 +43,7 @@ int	routine_actions(t_philosopher *philosopher, long mtime, int dead)
 	{
 		pthread_mutex_lock(philosopher->left_fork);
 		printf("Philo -> %d: left fork   | took %ld ms -> (%ld).\n", \
-		philosopher->id, mtime / 1000, mtime);
+		philosopher->id + 1, mtime / 1000, mtime);
 		gettimeofday(&philosopher->end_fork, NULL);
 		if (philosopher->shared->stop_all_threads == 0)
 			eat(philosopher);
@@ -53,7 +53,7 @@ int	routine_actions(t_philosopher *philosopher, long mtime, int dead)
 		philosopher->times_eaten >= philosopher->max_times_to_eat)
 			return (1);
 		printf("\033[33mPhilo -> %d: is thinking | took %ld ms -> (%ld).\
-		\033[0m\n", philosopher->id, mtime / 1000, mtime);
+		\033[0m\n", philosopher->id + 1, mtime / 1000, mtime);
 	}
 	return (0);
 }
@@ -63,32 +63,15 @@ void	*philosopher_routine(void *arg)
 	t_philosopher	*philosopher;
 	long			mtime;
 	int				dead;
-	int		dead_philo;
 
 	mtime = 0;
 	dead = 0;
-	dead_philo = 0;
 	philosopher = (t_philosopher *)arg;
 	while (1)
 	{
 		if (end_loop(philosopher) == (void *)1)
-		{
-			if (dead == 0 && philosopher->id == dead_philo)
-			{
-				pthread_mutex_unlock(philosopher->shared->death);
-				dead_philo = philosopher->id;
-				printf("\033[31mPhilo -> %d: died in %ld ms (%ld)\033[0m\n", \
-			philosopher->id, mtime / 1000, mtime);
-				return ((void *)0);
-			}
-		}
+			return ((void *)0);
 		pthread_mutex_unlock(philosopher->shared->death);
-
-			//else
-			//{
-			//	printf("");
-			//	break ;
-			//}
 		gettimeofday(&philosopher->start_fork, NULL);
 		lock_forks(philosopher);
 		if (check_end(philosopher, mtime))
