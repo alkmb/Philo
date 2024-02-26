@@ -6,7 +6,7 @@
 /*   By: akambou <akambou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/26 20:21:12 by kmb               #+#    #+#             */
-/*   Updated: 2024/02/23 16:47:22 by akambou          ###   ########.fr       */
+/*   Updated: 2024/02/26 16:38:38 by akambou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ void	create_threads(pthread_t *threads, t_philosopher \
 int		join_threads(pthread_t *threads, int num_philosophers);
 
 /*-----------------------EXIT----------------------*/
-int		check_end(t_philosopher *philosopher, int mtime2);
+int		check_end(t_philosopher *philosopher, int mtime, int dead);
 void	*end_loop(t_philosopher *philosopher);
 
 #endif

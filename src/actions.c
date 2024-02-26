@@ -6,7 +6,7 @@
 /*   By: akambou <akambou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 18:11:48 by akambou           #+#    #+#             */
-/*   Updated: 2024/02/23 16:25:02 by akambou          ###   ########.fr       */
+/*   Updated: 2024/02/26 16:40:46 by akambou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,7 @@ void	eat(t_philosopher *philosopher)
 	seconds = philosopher->end.tv_sec - philosopher->start.tv_sec;
 	useconds = philosopher->end.tv_usec - philosopher->start.tv_usec;
 	mtime = ((seconds * 1000000) + useconds) + 0.5;
-	if (philosopher->shared->stop_all_threads == 0)
-		printf("\033[32mPhilo -> %d: is eating   | took %ld ms -> \(%ld).\
+	printf("\033[32mPhilo -> %d: is eating   | took %ld ms -> \(%ld).\
 	\033[0m\n", philosopher->id + 1, mtime / 1000, mtime);
 	pthread_mutex_unlock(philosopher->right_fork);
 	pthread_mutex_unlock(philosopher->left_fork);

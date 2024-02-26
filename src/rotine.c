@@ -6,7 +6,7 @@
 /*   By: akambou <akambou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 18:11:21 by akambou           #+#    #+#             */
-/*   Updated: 2024/02/23 16:53:07 by akambou          ###   ########.fr       */
+/*   Updated: 2024/02/26 16:59:49 by akambou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ int	routine_actions(t_philosopher *philosopher, long mtime, int dead)
 		printf("Philo -> %d: left fork   | took %ld ms -> (%ld).\n", \
 		philosopher->id + 1, mtime / 1000, mtime);
 		gettimeofday(&philosopher->end_fork, NULL);
-		if (philosopher->shared->stop_all_threads == 0)
+		if (dead == 0)
 			eat(philosopher);
 		sleeping(philosopher);
 		gettimeofday(&philosopher->start_fork, NULL);
@@ -74,15 +74,13 @@ void	*philosopher_routine(void *arg)
 		pthread_mutex_unlock(philosopher->shared->death);
 		gettimeofday(&philosopher->start_fork, NULL);
 		lock_forks(philosopher);
-		if (check_end(philosopher, mtime))
+		if (check_end(philosopher, mtime, dead))
 			dead = 1;
+		pthread_mutex_unlock(philosopher->shared->death);
 		mtime = get_time(philosopher->start_fork, philosopher->end_fork, \
 		mtime);
-		if (dead == 0)
-		{
-			if (routine_actions(philosopher, mtime, dead) == 1)
-				break ;
-		}
+		if (routine_actions(philosopher, mtime, dead) == 1)
+			break ;
 	}
 	return ((void *)0);
 }

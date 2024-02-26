@@ -6,7 +6,7 @@
 /*   By: akambou <akambou@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/07 06:10:53 by akambou           #+#    #+#             */
-/*   Updated: 2024/02/23 16:57:02 by akambou          ###   ########.fr       */
+/*   Updated: 2024/02/26 17:49:35 by akambou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,19 @@ void	create_threads(pthread_t *threads, t_philosopher \
 }
 
 int	join_threads(pthread_t *threads, int num_philosophers)
+{
+	int		i;
+
+	i = 0;
+	while (i < num_philosophers)
+	{
+		pthread_join(threads[i], NULL);
+		i++;
+	}
+	return (0);
+}
+
+int	detach_threads(pthread_t *threads, int num_philosophers)
 {
 	int		i;
 
@@ -59,12 +72,32 @@ pthread_t *threads)
 	free(threads);
 }
 
+void	end_program(t_philosopher *philosophers, pthread_t *threads, \
+int num_philosophers)
+{
+	int	mtime;
+
+	mtime = 0;
+	gettimeofday(&philosophers->start_fork, NULL);
+	while (!end_loop(philosophers))
+	{
+	}
+	gettimeofday(&philosophers->end_fork, NULL);
+	mtime = get_time(philosophers->start_fork, philosophers->end_fork, \
+	mtime);
+	if (num_philosophers <= 10)
+		mtime -= philosophers->time_to_die;
+	join_threads(threads, num_philosophers);
+	printf("\033[31mA Philo died in %d ms (%d) \033[0m\n", \
+	mtime / 1000, mtime);
+	cleanup(philosophers, num_philosophers, threads);
+}
+
 int	main(int argc, char **argv)
 {
 	int				num_philosophers;
 	t_philosopher	*philosophers;
 	pthread_t		*threads;
-	int				mtime;
 	t_shared		shared;
 
 	if (argc < 5)
@@ -75,7 +108,6 @@ time_to_eat time_to_sleep max_times_to_eat\n", argv[0]);
 	}
 	num_philosophers = atoi(argv[1]);
 	shared.stop_all_threads = 0;
-	mtime = 0;
 	shared.death = malloc(sizeof(pthread_mutex_t));
 	pthread_mutex_init(shared.death, NULL);
 	philosophers = malloc(sizeof(t_philosopher) * num_philosophers);
@@ -83,18 +115,8 @@ time_to_eat time_to_sleep max_times_to_eat\n", argv[0]);
 	initialize_philosophers(philosophers, num_philosophers, \
 	argv, &shared);
 	create_threads(threads, philosophers, num_philosophers);
-	gettimeofday(&philosophers->start_fork, NULL);
-	while (!end_loop(philosophers))
-	{
-	}
-	gettimeofday(&philosophers->end_fork, NULL);
-	mtime = get_time(philosophers->start_fork, philosophers->end_fork, \
-	mtime);
-	mtime -= philosophers->time_to_die;
-	printf("\033[31mA Philo died in %d ms (%d) \033[0m\n", \
-	mtime / 1000, mtime);
-	join_threads(threads, num_philosophers);
-	cleanup(philosophers, num_philosophers, threads);
+	end_program(philosophers, threads, num_philosophers);
 	free(shared.death);
 	return (0);
+
 }
