@@ -49,9 +49,11 @@ typedef struct philosopher_s
 }	t_philosopher;
 
 /*-----------------------ROUTINE----------------------*/
-void	eat(t_philosopher *philosopher);
+long	lock_forks(t_philosopher *philosopher);
+int		routine_actions(t_philosopher *philosopher, long mtime, int dead);
 void	*philosopher_routine(void *philosopher);
 void	sleeping(t_philosopher *philosopher);
+void	eat(t_philosopher *philosopher);
 long	get_time(struct timeval start, struct timeval end, long mtime2);
 
 /*-----------------------INIT----------------------*/
@@ -65,9 +67,14 @@ void	assign_forks(t_philosopher *philosophers, int num_philosophers);
 void	create_threads(pthread_t *threads, t_philosopher \
 		*philosophers, int num_philosophers);
 int		join_threads(pthread_t *threads, int num_philosophers);
+int		detach_threads(pthread_t *threads, int num_philosophers);
 
 /*-----------------------EXIT----------------------*/
 int		check_end(t_philosopher *philosopher, int mtime, int dead);
 void	*end_loop(t_philosopher *philosopher);
+void	end_program(t_philosopher *philosophers, pthread_t *threads, \
+		int num_philosophers);
+void	cleanup(t_philosopher *philosophers, int num_philosophers, \
+		pthread_t *threads);
 
 #endif

@@ -72,27 +72,6 @@ pthread_t *threads)
 	free(threads);
 }
 
-void	end_program(t_philosopher *philosophers, pthread_t *threads, \
-int num_philosophers)
-{
-	int	mtime;
-
-	mtime = 0;
-	gettimeofday(&philosophers->start_fork, NULL);
-	while (!end_loop(philosophers))
-	{
-	}
-	gettimeofday(&philosophers->end_fork, NULL);
-	mtime = get_time(philosophers->start_fork, philosophers->end_fork, \
-	mtime);
-	if (num_philosophers <= 10)
-		mtime -= philosophers->time_to_die;
-	join_threads(threads, num_philosophers);
-	printf("\033[31mA Philo died in %d ms (%d) \033[0m\n", \
-	mtime / 1000, mtime);
-	cleanup(philosophers, num_philosophers, threads);
-}
-
 int	main(int argc, char **argv)
 {
 	int				num_philosophers;
@@ -118,5 +97,4 @@ time_to_eat time_to_sleep max_times_to_eat\n", argv[0]);
 	end_program(philosophers, threads, num_philosophers);
 	free(shared.death);
 	return (0);
-
 }

@@ -11,7 +11,7 @@
 # **************************************************************************** #
 
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror -I includes -g -fsanitize=thread
+CFLAGS = -Wall -Wextra -Werror -I includes -g -fsanitize=address
 RM = rm -rf
 
 SRCS = $(wildcard src/*.c)
