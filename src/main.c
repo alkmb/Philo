@@ -62,9 +62,6 @@ pthread_t *threads)
 	i = 0;
 	while (i < num_philosophers)
 	{
-		pthread_mutex_destroy(philosophers[i].left_fork);
-		pthread_mutex_destroy(philosophers[i].right_fork);
-		pthread_mutex_destroy(philosophers[i].shared->death);
 		free(philosophers[i].right_fork);
 		i++;
 	}
