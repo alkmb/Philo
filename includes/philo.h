@@ -71,7 +71,7 @@ int		detach_threads(pthread_t *threads, int num_philosophers);
 
 /*-----------------------EXIT----------------------*/
 int		check_end(t_philosopher *philosopher, int mtime, int dead);
-void	*end_loop(t_philosopher *philosopher);
+int		end_loop(t_philosopher *philosopher);
 void	end_program(t_philosopher *philosophers, pthread_t *threads, \
 		int num_philosophers);
 void	cleanup(t_philosopher *philosophers, int num_philosophers, \

@@ -69,7 +69,7 @@ void	*philosopher_routine(void *arg)
 	philosopher = (t_philosopher *)arg;
 	while (1)
 	{
-		if (end_loop(philosopher) == (void *)1)
+		if (end_loop(philosopher) != 0)
 			return ((void *)0);
 		pthread_mutex_unlock(philosopher->shared->death);
 		gettimeofday(&philosopher->start_fork, NULL);
