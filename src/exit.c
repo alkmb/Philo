@@ -48,12 +48,11 @@ int num_philosophers)
 	gettimeofday(&philosophers->start_fork, NULL);
 	while (!end_loop(philosophers))
 	{
+		gettimeofday(&philosophers->start_fork, NULL);
 	}
 	gettimeofday(&philosophers->end_fork, NULL);
 	mtime = get_time(philosophers->start_fork, philosophers->end_fork, \
 	mtime);
-	if (num_philosophers <= 10)
-		mtime -= philosophers->time_to_die;
 	join_threads(threads, num_philosophers);
 	printf("\033[31mA Philo died in %d ms (%d) \033[0m\n", \
 	mtime / 1000, mtime);
