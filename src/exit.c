@@ -6,7 +6,7 @@
 /*   By: kmb <kmb@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/15 02:05:35 by akambou           #+#    #+#             */
-/*   Updated: 2024/03/15 22:48:22 by kmb              ###   ########.fr       */
+/*   Updated: 2024/03/18 21:18:37 by kmb              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int	check_end(t_philosopher *philosopher, int mtime, int dead)
 	mtime += philosopher->time_to_eat;
 	if (mtime >= philosopher->time_to_die)
 	{
-		if (dead == 0)
+		if (dead == 0 && philosopher->shared->stop_all_threads == 0)
 			philosopher->shared->stop_all_threads = 1;
 		pthread_mutex_unlock(philosopher->shared->death);
 		return (1);
