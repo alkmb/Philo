@@ -14,7 +14,9 @@
 
 int	check_end(t_philosopher *philosopher, int mtime, int dead)
 {
-	int result = 0;
+	int	result;
+
+	result = 0;
 	pthread_mutex_lock(philosopher->shared->death);
 	mtime += philosopher->time_to_eat;
 	if (mtime >= philosopher->time_to_die)
@@ -24,7 +26,7 @@ int	check_end(t_philosopher *philosopher, int mtime, int dead)
 		result = 1;
 	}
 	pthread_mutex_unlock(philosopher->shared->death);
-	return result;
+	return (result);
 }
 
 int	end_loop(t_philosopher *philosopher)
