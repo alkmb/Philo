@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   rotine.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akambou <akambou@student.42.fr>            +#+  +:+       +#+        */
+/*   By: kmb <kmb@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 18:11:21 by akambou           #+#    #+#             */
-/*   Updated: 2024/02/26 16:59:49 by akambou          ###   ########.fr       */
+/*   Updated: 2024/03/19 18:21:29 by kmb              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,9 +49,12 @@ int	routine_actions(t_philosopher *philosopher, long mtime, int dead)
 			eat(philosopher);
 		sleeping(philosopher);
 		gettimeofday(&philosopher->start_fork, NULL);
+		pthread_mutex_lock(philosopher->shared->death);
 		if (philosopher->max_times_to_eat != 0 && \
-		philosopher->times_eaten >= philosopher->max_times_to_eat)
-			return (1);
+		philosopher->times_eaten >= philosopher->max_times_to_eat && \
+		philosopher->shared->stop_all_threads == 0)
+			philosopher->shared->stop_all_threads = 1;
+		pthread_mutex_unlock(philosopher->shared->death);
 		printf("\033[33mPhilo -> %d: is thinking | took %ld ms -> (%ld).\
 		\033[0m\n", philosopher->id + 1, mtime / 1000, mtime);
 	}
@@ -79,8 +82,8 @@ void	*philosopher_routine(void *arg)
 		pthread_mutex_unlock(philosopher->shared->death);
 		mtime = get_time(philosopher->start_fork, philosopher->end_fork, \
 		mtime);
-		if (routine_actions(philosopher, mtime, dead) == 1)
-			break ;
+		if (routine_actions(philosopher, mtime, dead) != 0)
+			return ((void *)0);
 	}
 	return ((void *)0);
 }
