@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akambou <akambou@student.42.fr>            +#+  +:+       +#+        */
+/*   By: kmb <kmb@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/07 06:10:53 by akambou           #+#    #+#             */
-/*   Updated: 2024/02/26 17:49:35 by akambou          ###   ########.fr       */
+/*   Updated: 2024/03/30 22:05:05 by kmb              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,6 @@ time_to_eat time_to_sleep max_times_to_eat\n", argv[0]);
 	threads = malloc(sizeof(pthread_t) * num_philosophers);
 	initialize_philosophers(philosophers, num_philosophers, \
 	argv, &shared);
-	create_threads(threads, philosophers, num_philosophers);
 	end_program(philosophers, threads, num_philosophers);
 	free(shared.death);
 	return (0);

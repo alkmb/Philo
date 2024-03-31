@@ -6,7 +6,7 @@
 /*   By: kmb <kmb@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/15 02:05:35 by akambou           #+#    #+#             */
-/*   Updated: 2024/03/19 18:18:50 by kmb              ###   ########.fr       */
+/*   Updated: 2024/03/30 22:04:42 by kmb              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ int	end_loop(t_philosopher *philosopher)
 	pthread_mutex_lock(philosopher->shared->death);
 	if (philosopher->shared->stop_all_threads != 0)
 	{
+		pthread_mutex_unlock(philosopher->shared->death);
 		philo = philosopher->id + 1;
 	}
 	pthread_mutex_unlock(philosopher->shared->death);
@@ -50,9 +51,10 @@ int num_philosophers)
 	int	philo;
 
 	mtime = 0;
+	create_threads(threads, philosophers, num_philosophers);
 	gettimeofday(&philosophers->start_fork, NULL);
 	philo = end_loop(philosophers);
-	while (philo == 0)
+	while (!philo)
 	{
 		gettimeofday(&philosophers->start_fork, NULL);
 		philo = end_loop(philosophers);
