@@ -6,7 +6,7 @@
 /*   By: kmb <kmb@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/26 20:21:12 by kmb               #+#    #+#             */
-/*   Updated: 2024/03/30 21:54:10 by kmb              ###   ########.fr       */
+/*   Updated: 2024/04/16 04:57:11 by kmb              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 typedef struct s_shared
 {
 	int				stop_all_threads;
+	int				dead_philo;
 	pthread_mutex_t	*death;
 }	t_shared;
 

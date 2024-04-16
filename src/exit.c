@@ -6,7 +6,7 @@
 /*   By: kmb <kmb@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/15 02:05:35 by akambou           #+#    #+#             */
-/*   Updated: 2024/03/30 22:04:42 by kmb              ###   ########.fr       */
+/*   Updated: 2024/04/16 05:02:20 by kmb              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,10 @@ int	check_end(t_philosopher *philosopher, int mtime, int dead)
 	if (mtime >= philosopher->time_to_die)
 	{
 		if (dead == 0 && philosopher->shared->stop_all_threads == 0)
+		{
 			philosopher->shared->stop_all_threads = 1;
+			philosopher->shared->dead_philo = philosopher->id + 1;
+		}
 		result = 1;
 	}
 	pthread_mutex_unlock(philosopher->shared->death);
@@ -31,17 +34,14 @@ int	check_end(t_philosopher *philosopher, int mtime, int dead)
 
 int	end_loop(t_philosopher *philosopher)
 {
-	int	philo;
-
-	philo = 0;
 	pthread_mutex_lock(philosopher->shared->death);
 	if (philosopher->shared->stop_all_threads != 0)
 	{
 		pthread_mutex_unlock(philosopher->shared->death);
-		philo = philosopher->id + 1;
+		return (1);
 	}
 	pthread_mutex_unlock(philosopher->shared->death);
-	return (philo);
+	return (0);
 }
 
 void	end_program(t_philosopher *philosophers, pthread_t *threads, \
@@ -68,6 +68,6 @@ int num_philosophers)
 		philosophers->max_times_to_eat);
 	else
 		printf("\033[31mA Philo %d died in %d ms (%d) \033[0m\n", \
-	philo, mtime / 1000, mtime);
+	philosophers->shared->dead_philo, mtime / 1000, mtime);
 	cleanup(philosophers, num_philosophers, threads);
 }
