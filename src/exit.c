@@ -6,7 +6,7 @@
 /*   By: kmb <kmb@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/15 02:05:35 by akambou           #+#    #+#             */
-/*   Updated: 2024/04/16 05:09:06 by kmb              ###   ########.fr       */
+/*   Updated: 2024/04/16 05:09:49 by kmb              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,7 @@ int	check_end(t_philosopher *philosopher, int mtime, int dead)
 int	end_loop(t_philosopher *philosopher)
 {
 	pthread_mutex_lock(philosopher->shared->death);
-	if (philosopher->shared->stop_all_threads != 0 && \
-	philosopher->shared->dead_philo == philosopher->id + 1)
+	if (philosopher->shared->stop_all_threads != 0)
 	{
 		pthread_mutex_unlock(philosopher->shared->death);
 		return (1);
